@@ -30,8 +30,8 @@ pipeline {
        
 	stage('Sonar') {
     	    steps {
-        	timeout(time: 4, unit: 'MINUTES') {
-            	     withSonarQubeEnv('sonarqube') {
+        	timeout(time: 8, unit: 'MINUTES') {
+            	     withSonarQubeEnv('Sonarqube') {
                         sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar -Pcoverage -f bolsa-laboral/pom.xml"
             	    }
                 }
@@ -44,7 +44,7 @@ pipeline {
 
                 script {
                     try {
-                        timeout(time: 3, unit: 'MINUTES') {
+                        timeout(time: 4, unit: 'MINUTES') {
                             waitForQualityGate() // Sin abortPipeline para que no falle automáticamente
                         }
                     } catch (e) {
