@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+//FRAY KANA
 @RestController
 @RequestMapping("/api/ofertas")
 public class OfertaLaboralController {
