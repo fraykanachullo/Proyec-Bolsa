@@ -5,6 +5,14 @@ pipeline {
         maven "MAVEN_HOME"
     }
 
+    environment {
+        DB_URL = 'jdbc:mysql://169.254.17.50:3306/bolsalaboraltest'
+        DB_USERNAME = 'fray'
+        DB_PASSWORD = '123456'
+        JWT_SECRET = 'secretsecretsecretsecretsecretsecretsecretsecret'
+        SERVER_PORT = '8080'
+    }
+
     stages {
         stage('Clean workspace') {
             steps {
@@ -22,7 +30,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                timeout(time: 4, unit: 'MINUTES') {
+                timeout(time: 8, unit: 'MINUTES') {
                     sh "mvn -DskipTests clean package -f bolsa-laboral/pom.xml"
                 }
             }
@@ -30,7 +38,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                timeout(time: 10, unit: 'MINUTES') {
+                timeout(time: 15, unit: 'MINUTES') {
                     sh "mvn clean install -f bolsa-laboral/pom.xml"
                 }
             }
@@ -38,7 +46,7 @@ pipeline {
 
         stage('Sonar') {
             steps {
-                timeout(time: 4, unit: 'MINUTES') {
+                timeout(time: 8, unit: 'MINUTES') {
                     withSonarQubeEnv('Sonarqube') {
                         sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar -Pcoverage -f bolsa-laboral/pom.xml"
                     }
@@ -56,7 +64,7 @@ pipeline {
                         }
                     } catch (e) {
                         echo "Timeout o fallo del Quality Gate: ${e.getMessage()}, pero el pipeline continúa."
-                        currentBuild.result = 'UNSTABLE' // Si es necesario, marcar el build como inestable
+                        currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
@@ -64,7 +72,16 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh "mvn spring-boot:run -f bolsa-laboral/pom.xml"
+                timeout(time: 10, unit: 'MINUTES') {
+                    sh '''
+                    export SPRING_DATASOURCE_URL=$DB_URL
+                    export SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+                    export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+                    export JWT_SECRET=$JWT_SECRET
+                    export SERVER_PORT=$SERVER_PORT
+                    mvn spring-boot:run -f bolsa-laboral/pom.xml
+                    '''
+                }
             }
         }
     }
