@@ -10,6 +10,7 @@ import java.util.List;
 
 
 //FRAY KANA
+//mejorado
 @RestController
 @RequestMapping("/api/ofertas")
 public class OfertaLaboralController {
