@@ -22,7 +22,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                timeout(time: 8, unit: 'MINUTES') {
+                timeout(time: 4, unit: 'MINUTES') {
                     sh "mvn -DskipTests clean package -f bolsa-laboral/pom.xml"
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
+                timeout(time: 10, unit: 'MINUTES') {
                     sh "mvn clean install -f bolsa-laboral/pom.xml"
                 }
             }
@@ -38,7 +38,7 @@ pipeline {
 
         stage('Sonar') {
             steps {
-                timeout(time: 8, unit: 'MINUTES') {
+                timeout(time: 4, unit: 'MINUTES') {
                     withSonarQubeEnv('Sonarqube') {
                         sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar -Pcoverage -f bolsa-laboral/pom.xml"
                     }
