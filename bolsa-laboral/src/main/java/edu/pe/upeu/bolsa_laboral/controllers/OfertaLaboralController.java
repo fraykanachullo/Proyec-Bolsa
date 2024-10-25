@@ -11,6 +11,7 @@ import java.util.List;
 
 //FRAY KANA
 //kana
+// final
 @RestController
 @RequestMapping("/api/ofertas")
 public class OfertaLaboralController {
